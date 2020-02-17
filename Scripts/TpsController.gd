@@ -157,13 +157,13 @@ func process_movement_input() -> void:
 	new_movement_direction.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	new_movement_direction.z = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 	
-	movement_direction.x *= movement_speed
-	movement_direction.z *= movement_speed
-	
 	new_movement_direction = new_movement_direction.normalized()
 	
 	# Change the transform to local from world
 	new_movement_direction = self.transform.basis.xform(new_movement_direction)
+	
+	new_movement_direction.x *= movement_speed
+	new_movement_direction.z *= movement_speed
 	
 	new_movement_direction.y = oldGravity;
 	
