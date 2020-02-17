@@ -69,9 +69,7 @@ func movement_logic() -> void: pass
 
 
 func move() -> void:
-	var delta = get_process_delta_time()
-	movement_direction.z *= movement_speed
-	movement_direction.x *= movement_speed
+	var delta = get_physics_process_delta_time()
 	
 	var snapValue = Vector3() if is_jumping() else Vector3(0, -1, 0)
 	
@@ -156,8 +154,11 @@ func process_movement_input() -> void:
 	var new_movement_direction = Vector3()
 	
 	# Get movement direction from input
-	new_movement_direction.z = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 	new_movement_direction.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+	new_movement_direction.z = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+	
+	movement_direction.x *= movement_speed
+	movement_direction.z *= movement_speed
 	
 	new_movement_direction = new_movement_direction.normalized()
 	
