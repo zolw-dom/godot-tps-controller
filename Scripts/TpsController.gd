@@ -9,6 +9,7 @@ class_name TpsController
 ################
 
 var movement_direction : Vector3
+var velocity : Vector3
 
 # Camera nodes
 var camera_pivot : Spatial
@@ -16,16 +17,19 @@ var camera_rod : Spatial
 
 # Movement properties
 export var movement_speed : float = 400.0
+export var airbone_multiplier : float = 0.50
 export var jump_height : float = 400.0
 export var gravity : float = -20.0
-
+export var slide_value : float = 0.9
 # Camera properties
 	# Camera movement
 export var mouse_sensitivity : float = 0.15
 export var camera_min_vertical_rotation : float = -45.0
 export var camera_max_vertical_rotation : float = 45.0
 	# Camera zooming
-export var camera_min_zoom_distance : float = 0.0
+export var camera_zoom : float = 3.0 setget set_camera_zoom
+func set_camera_zoom(value): camera_zoom = clamp(value, camera_min_zoom_distance, camera_max_zoom_distance)
+export var camera_min_zoom_distance : float = 3.0
 export var camera_max_zoom_distance : float = 10.0
 
 # Cursor
@@ -40,13 +44,14 @@ func get_is_cursor_visible(): return Input.get_mouse_mode() == Input.MOUSE_MODE_
 #####################
 
 func _ready() -> void:
-	camera_pivot = get_node("CameraPivot")
+	camera_pivot = $"CameraPivot"
 	camera_rod = camera_pivot.get_node("CameraRod")
+	
+	self.camera_zoom = self.camera_zoom
 	
 	self.is_cursor_visible = false
 
 
-# warning-ignore:unused_argument
 func _process(delta: float) -> void:
 	process_basic_input()
 	process_movement_input()
@@ -54,6 +59,7 @@ func _process(delta: float) -> void:
 
 func _physics_process(delta: float) -> void:
 	movement_logic()
+	camera_zoom()
 
 
 func _input(event : InputEvent):
@@ -70,24 +76,30 @@ func movement_logic() -> void: pass
 
 func move() -> void:
 	var delta = get_process_delta_time()
-	movement_direction.z *= movement_speed
-	movement_direction.x *= movement_speed
-	
 	var snapValue = Vector3() if is_jumping() else Vector3(0, -1, 0)
 	
-	move_and_slide_with_snap(movement_direction * delta, snapValue, Vector3.UP, true)
+	move_and_slide_with_snap((velocity + movement_direction) * delta, snapValue, Vector3.UP, true)
+
+
+func airborne_move() -> void:
+	var delta = get_process_delta_time()
+	var snapValue = Vector3() if is_jumping() else Vector3(0, -1, 0)
+	
+	move_and_slide((velocity + movement_direction * airbone_multiplier) * delta, Vector3.UP, true)
 
 
 func jump() -> void:
-	movement_direction.y = jump_height
+	velocity = movement_direction
+	velocity.y = jump_height
 
 
 func fall() -> void:
-	movement_direction.y += gravity
+	velocity.y += gravity
 
 
 func land() -> void:
-	movement_direction.y = 0
+	velocity.x *= slide_value
+	velocity.z *= slide_value
 
 
 
@@ -95,12 +107,8 @@ func land() -> void:
 #  Camera methods  #
 ####################
 
-func camera_zoom(zoom_value : float):
-	var current_zoom = camera_rod.transform.origin.z
-	camera_rod.transform.origin.z = clamp(
-		current_zoom + zoom_value,
-		camera_min_zoom_distance, camera_max_zoom_distance
-	)
+func camera_zoom():
+	camera_rod.transform.origin.z += (self.camera_zoom - camera_rod.transform.origin.z) * 0.1
 
 
 func rotate_camera(camera_direction : Vector2) -> void:
@@ -145,24 +153,27 @@ func process_mouse_input(event : InputEvent) -> void:
 	elif event is InputEventMouseButton:
 		if event.is_pressed():
 			if event.button_index == BUTTON_WHEEL_UP:
-				camera_zoom(-1)
+				self.camera_zoom -= 1
 			if event.button_index == BUTTON_WHEEL_DOWN:
-				camera_zoom(1)
+				self.camera_zoom += 1
 
 
 func process_movement_input() -> void:
 	var oldGravity = movement_direction.y
 	
-	var new_movement_direction = Vector3()
-	
-	# Get movement direction from input
-	new_movement_direction.z = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
-	new_movement_direction.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
+	var new_movement_direction = Vector3(
+		Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
+		0,
+		Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
+	)
 	
 	new_movement_direction = new_movement_direction.normalized()
 	
 	# Change the transform to local from world
 	new_movement_direction = self.transform.basis.xform(new_movement_direction)
+	
+	new_movement_direction.x *= movement_speed
+	new_movement_direction.z *= movement_speed
 	
 	new_movement_direction.y = oldGravity;
 	

@@ -22,11 +22,12 @@ func _process(delta: float) -> void:
 ######################
 
 func movement_logic() -> void:
-	move()
 
 	if is_on_floor():
+		move()
 		land()
 		if is_jumping():
 			jump()
 	else:
+		airborne_move()
 		fall()
