@@ -22,7 +22,6 @@ func _process(delta: float) -> void:
 ######################
 
 func movement_logic() -> void:
-
 	if is_on_floor():
 		move()
 		land()

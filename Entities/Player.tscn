@@ -21,9 +21,13 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.43052, 0 )
 
 [node name="Camera" type="Camera" parent="CameraPivot/CameraRod"]
 
+[node name="CameraRayCast" type="RayCast" parent="CameraPivot"]
+enabled = true
+collide_with_areas = true
+
 [node name="Model" type="Spatial" parent="."]
 
 [node name="Box" type="CSGBox" parent="Model"]
 width = 1.07781
-height = 3.37444
+height = 3.58479
 depth = 1.23696

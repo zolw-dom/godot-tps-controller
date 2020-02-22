@@ -28,7 +28,20 @@ _global_script_class_icons={
 
 config/name="tps-controller"
 run/main_scene="res://Maps/TestMap.tscn"
-config/icon="res://icon.png"
+
+[autoload]
+
+Signals="*res://Scripts/Signals.gd"
+
+[debug]
+
+gdscript/warnings/unused_variable=false
+gdscript/warnings/unused_argument=false
+gdscript/warnings/return_value_discarded=false
+
+[display]
+
+window/size/resizable=false
 
 [input]
 
@@ -60,7 +73,17 @@ ui_down={
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
  ]
 }
+"Debug Window"={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777244,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
+[locale]
+
+locale_filter=[ 1, [ "hu_HU", "ko" ] ]
 
 [rendering]
 
+quality/driver/driver_name="GLES2"
 environment/default_environment="res://default_env.tres"
