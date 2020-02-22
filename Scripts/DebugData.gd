@@ -40,7 +40,7 @@ func update_debug_data(name, value) -> void:
 
 func format_value(value) -> String:
 	if typeof(value) == TYPE_VECTOR3:
-		return "(X: %5.2f,  Y: %5.2f,  Z: %5.2f)" % [value.x, value.y, value.z]
+		return "(X: %.2f,  Y: %.2f,  Z: %.2f)" % [value.x, value.y, value.z]
 	elif typeof(value) == TYPE_REAL:
 		return "%.2f" % value
 	else:
