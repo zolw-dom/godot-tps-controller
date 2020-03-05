@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/TpsCamera.gd" type="Script" id=2]
 
 [sub_resource type="CapsuleShape" id=1]
 radius = 0.802464
@@ -16,11 +17,12 @@ shape = SubResource( 1 )
 
 [node name="CameraPivot" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.43052, 0 )
+script = ExtResource( 2 )
 
 [node name="CameraRod" type="Spatial" parent="CameraPivot"]
 
 [node name="Camera" type="Camera" parent="CameraPivot/CameraRod"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.25 )
 
 [node name="CameraRayCast" type="RayCast" parent="CameraPivot"]
 enabled = true

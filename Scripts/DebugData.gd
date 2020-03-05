@@ -9,7 +9,7 @@ var background : ColorRect
 
 func _ready() -> void:
 	background = get_node("../DebugBackground")
-	var label_names = ["FPS", "POSITION", "MOVEMENT", "CAMERA_ZOOM"]
+	var label_names = ["FPS", "POSITION", "MOVEMENT"]
 	generate_debug_labels(label_names)
 	
 	Signals.connect("debug_data", self, "update_debug_data")
